@@ -41,7 +41,12 @@ const parseScholarshipResponse = (text: string): Scholarship[] => {
 
 export const searchScholarships = async (profile: UserProfile): Promise<SearchResult> => {
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("API Key not found. Please ensure process.env.API_KEY is set in your environment.");
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
     
     // Get current date in YYYY-MM-DD format based on user's local time
     const now = new Date();

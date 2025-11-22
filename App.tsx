@@ -18,10 +18,11 @@ const App: React.FC = () => {
       const result = await searchScholarships(profile);
       setSearchResult(result);
       setViewState('results');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       setViewState('error');
-      setErrorMsg("We encountered an issue searching for scholarships. Please check your connection and try again.");
+      // Display the actual error message to help with debugging (e.g., Missing API Key, Quota limits)
+      setErrorMsg(error.message || "We encountered an issue searching for scholarships. Please check your connection and try again.");
     }
   };
 

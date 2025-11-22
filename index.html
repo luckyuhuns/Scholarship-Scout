@@ -11,6 +11,12 @@
         font-family: 'Inter', sans-serif;
       }
     </style>
+    <script>
+      // Shim for process.env in browser environments to prevent crashes
+      if (typeof process === 'undefined') {
+        window.process = { env: {} };
+      }
+    </script>
   <script type="importmap">
 {
   "imports": {
