@@ -8,8 +8,10 @@ const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>('onboarding');
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [fundingPreference, setFundingPreference] = useState<'Fully Funded' | 'Partial Funding' | 'Both'>('Both');
 
   const handleProfileSubmit = async (profile: UserProfile) => {
+    setFundingPreference(profile.fundingPreference);
     setViewState('searching');
     setErrorMsg("");
     try {
@@ -26,6 +28,7 @@ const App: React.FC = () => {
   const handleRestart = () => {
     setViewState('onboarding');
     setSearchResult(null);
+    setFundingPreference('Both');
   };
 
   return (
@@ -85,6 +88,7 @@ const App: React.FC = () => {
                scholarships={searchResult.scholarships} 
                sources={searchResult.sources}
                onRestart={handleRestart}
+               fundingPreference={fundingPreference}
              />
              {/* Fallback if parsing failed completely but we have text */}
              {searchResult.scholarships.length === 0 && searchResult.rawText && (

@@ -5,10 +5,13 @@ interface ScholarshipListProps {
   scholarships: Scholarship[];
   sources: GroundingSource[];
   onRestart: () => void;
+  fundingPreference: 'Fully Funded' | 'Partial Funding' | 'Both';
 }
 
-const ScholarshipList: React.FC<ScholarshipListProps> = ({ scholarships, sources, onRestart }) => {
-  const [filterType, setFilterType] = useState<'All' | 'Fully Funded' | 'Partial Funding'>('All');
+const ScholarshipList: React.FC<ScholarshipListProps> = ({ scholarships, sources, onRestart, fundingPreference }) => {
+  const [filterType, setFilterType] = useState<'All' | 'Fully Funded' | 'Partial Funding'>(
+    fundingPreference === 'Both' ? 'All' : fundingPreference
+  );
   const [sortOrder, setSortOrder] = useState<'deadlineAsc' | 'deadlineDesc'>('deadlineAsc');
 
   const filteredAndSorted = useMemo(() => {
@@ -60,24 +63,35 @@ const ScholarshipList: React.FC<ScholarshipListProps> = ({ scholarships, sources
         
         <div className="flex flex-wrap gap-3 items-center">
           <div className="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200">
-            <button 
-              onClick={() => setFilterType('All')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'All' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              All
-            </button>
-            <button 
-              onClick={() => setFilterType('Fully Funded')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'Fully Funded' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Fully Funded
-            </button>
-             <button 
-              onClick={() => setFilterType('Partial Funding')}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'Partial Funding' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Partial
-            </button>
+            {fundingPreference === 'Both' ? (
+              <>
+                <button 
+                  onClick={() => setFilterType('All')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'All' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                >
+                  All
+                </button>
+                <button 
+                  onClick={() => setFilterType('Fully Funded')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'Fully Funded' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                >
+                  Fully Funded
+                </button>
+                <button 
+                  onClick={() => setFilterType('Partial Funding')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition ${filterType === 'Partial Funding' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                >
+                  Partial
+                </button>
+              </>
+            ) : (
+              <button 
+                className="px-3 py-1.5 text-sm font-medium rounded-md bg-white text-blue-600 shadow-sm cursor-default"
+                disabled
+              >
+                {fundingPreference}
+              </button>
+            )}
           </div>
 
           <select 
