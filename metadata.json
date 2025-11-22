@@ -1,0 +1,5 @@
+{
+  "name": "Scholarship Scout",
+  "description": "An intelligent scholarship finder that matches your academic profile with real-time opportunities using Google Search and Gemini.",
+  "requestFramePermissions": []
+}
