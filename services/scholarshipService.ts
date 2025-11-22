@@ -41,11 +41,10 @@ const parseScholarshipResponse = (text: string): Scholarship[] => {
 
 export const searchScholarships = async (profile: UserProfile): Promise<SearchResult> => {
   try {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API Key not found. Please ensure process.env.API_KEY is set in your environment.");
-    }
-
+    // Use process.env.API_KEY directly. 
+    // If running in an environment like AI Studio/Project IDX, this is injected automatically.
+    // We allow the SDK to handle validation (passing an empty string if undefined will cause an SDK error, which we catch).
+    const apiKey = process.env.API_KEY || ""; 
     const ai = new GoogleGenAI({ apiKey });
     
     // Get current date in YYYY-MM-DD format based on user's local time

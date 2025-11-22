@@ -12,10 +12,9 @@
       }
     </style>
     <script>
-      // Shim for process.env in browser environments to prevent crashes
-      if (typeof process === 'undefined') {
-        window.process = { env: {} };
-      }
+      // Safe Shim for process.env in browser environments
+      window.process = window.process || {};
+      window.process.env = window.process.env || {};
     </script>
   <script type="importmap">
 {
