@@ -44,7 +44,7 @@ export const searchScholarships = async (profile: UserProfile): Promise<SearchRe
     // Use process.env.API_KEY directly. 
     // If running in an environment like AI Studio/Project IDX, this is injected automatically.
     // We allow the SDK to handle validation (passing an empty string if undefined will cause an SDK error, which we catch).
-    const apiKey = process.env.API_KEY || ""; 
+    const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : ""; 
     const ai = new GoogleGenAI({ apiKey });
     
     // Get current date in YYYY-MM-DD format based on user's local time
