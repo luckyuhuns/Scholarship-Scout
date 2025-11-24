@@ -14,53 +14,15 @@ const App: React.FC = () => {
     setFundingPreference(profile.fundingPreference);
     setViewState('searching');
     setErrorMsg("");
-
-    // Support for Google AI Studio / Project IDX Environments
-    if ((window as any).aistudio) {
-      try {
-        const aiStudio = (window as any).aistudio;
-        const hasKey = await aiStudio.hasSelectedApiKey();
-        if (!hasKey) {
-          const success = await aiStudio.openSelectKey();
-          if (!success) {
-             // User cancelled the key selection dialog
-             setViewState('onboarding');
-             return;
-          }
-        }
-      } catch (e) {
-        console.warn("Check for AI Studio key failed:", e);
-      }
-    }
-
     try {
       const result = await searchScholarships(profile);
       setSearchResult(result);
       setViewState('results');
     } catch (error: any) {
       console.error(error);
-      
-      // If the error relates to the API Key in a managed env, try to prompt for re-selection
-      if ((window as any).aistudio && error.message?.includes("Requested entity was not found")) {
-         try {
-            await (window as any).aistudio.openSelectKey();
-            // If successful, we could auto-retry, but asking user to click again is safer
-            setErrorMsg("API Key authorization updated. Please try searching again.");
-            setViewState('error');
-            return;
-         } catch (e) {
-            console.warn("Re-selection failed", e);
-         }
-      }
-
       setViewState('error');
       // Display the actual error message to help with debugging (e.g., Missing API Key, Quota limits)
-      // If the error comes from the SDK with a generic message, give a hint.
-      let msg = error.message || "We encountered an issue searching for scholarships.";
-      if (msg.includes("API key") || msg.includes("403") || msg.includes("key not found")) {
-         msg = "API Access Error: Please ensure your API Key is correctly configured in your environment.";
-      }
-      setErrorMsg(msg);
+      setErrorMsg(error.message || "We encountered an issue searching for scholarships. Please check your connection and try again.");
     }
   };
 
