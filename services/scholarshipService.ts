@@ -1,6 +1,35 @@
 import { GoogleGenAI } from "@google/genai";
 import { UserProfile, SearchResult, Scholarship, GroundingSource } from "../types";
 
+// Helper to safely retrieve API Key from various environment configurations
+const getApiKey = (): string => {
+  // 1. Try Vite / Modern Standards (Standard for Vercel React deployments)
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      // @ts-ignore
+      if (import.meta.env.VITE_API_KEY) return import.meta.env.VITE_API_KEY;
+      // @ts-ignore
+      if (import.meta.env.API_KEY) return import.meta.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore access errors
+  }
+  
+  // 2. Try Node/Process (Fallback for older stacks or specific configs)
+  try {
+    if (typeof process !== 'undefined' && process.env) {
+      if (process.env.VITE_API_KEY) return process.env.VITE_API_KEY;
+      if (process.env.REACT_APP_API_KEY) return process.env.REACT_APP_API_KEY;
+      if (process.env.API_KEY) return process.env.API_KEY;
+    }
+  } catch (e) {
+    // Ignore access errors
+  }
+
+  return "";
+};
+
 // Helper to determine if a deadline is valid (future, today, or rolling)
 const isDeadlineFutureOrRolling = (deadlineStr: string): boolean => {
   if (!deadlineStr) return true; // Keep if undefined to be safe
@@ -92,9 +121,11 @@ const parseScholarshipResponse = (text: string): Scholarship[] => {
 
 export const searchScholarships = async (profile: UserProfile): Promise<SearchResult> => {
   try {
-    // Note: We rely on the SDK to handle API key validation or the App.tsx flow to ensure it's present.
-    // But we default safely to prevent crashes in non-AI-Studio environments if process.env isn't polyfilled.
-    const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : ""; 
+    const apiKey = getApiKey();
+    
+    if (!apiKey) {
+      throw new Error("API Key missing. Please ensure 'VITE_API_KEY' is added to your Vercel Environment Variables.");
+    }
     
     const ai = new GoogleGenAI({ apiKey });
     

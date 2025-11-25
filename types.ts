@@ -33,3 +33,14 @@ export interface SearchResult {
 }
 
 export type ViewState = 'onboarding' | 'searching' | 'results' | 'error';
+
+// Add environment type definition to avoid TS errors
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_API_KEY: string;
+    readonly API_KEY: string;
+  }
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
